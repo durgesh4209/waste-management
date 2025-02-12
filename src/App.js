@@ -1,26 +1,19 @@
-import './App.css';
+import './App.css'; 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import SignupForm from './Components/signup';
-import HomePage from './Components/HomePage';
-import SignIn from './Components/signin';
+import Home from './Componats/Home/Home';
+import BuyWest from './Componats/Buy/Buy'; 
+
 
 function App() {
   return (
     <>
-      {/* <BrowserRouter>
+ 
+      <BrowserRouter>
         <Routes>
-          <Route path='/' element={<HomePage />} />
-          <Route path="signup" element={<SignupForm />}></Route>
+          <Route path='/' element={<Home />} />
+          <Route path='/buy' element={<BuyWest />} /> 
         </Routes>
-      </BrowserRouter> */}
-
-      <BrowserRouter> 
-      <Routes>
-        <Route path='/' element={<HomePage />} />
-        <Route path='signup' element={<SignupForm />} />
-        <Route path='/signin' element={<SignIn/>}/>
-      </Routes>
-    </BrowserRouter>
+      </BrowserRouter>
     </>
   );
 }

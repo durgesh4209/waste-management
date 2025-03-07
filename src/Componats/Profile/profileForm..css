@@ -1,0 +1,60 @@
+/* ProfileForm.css */
+
+.profile-container {
+    text-align: center;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+  
+  .profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ddd;
+    background-color: #f3f3f3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .profile-icon {
+    width: 80px;
+    height: 80px;
+    opacity: 0.8;
+  }
+  
+  .upload-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background-color: white;
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+  }
+  
+  .upload-btn:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .hidden-input {
+    display: none;
+  }
+  
+  .address {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  #addressForm {
+    margin-top: 20px;
+    text-align: left;
+  }
+  
+  .save-address {
+    text-align: center;
+    margin-top: 20px;
+  }

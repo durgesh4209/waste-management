@@ -14,7 +14,7 @@ const ProductFilterSearch = () => {
 
     return (
         <>
-            <div className="bg0 m-t-23 p-b-140">
+
                 <div className="container">
                     <div className="flex-w flex-sb-m p-b-52">
                         <div className="flex-w flex-l-m filter-tope-group m-tb-10">
@@ -53,7 +53,7 @@ const ProductFilterSearch = () => {
 
                     </div>
                 </div>
-            </div>
+      
         </>
 
     );

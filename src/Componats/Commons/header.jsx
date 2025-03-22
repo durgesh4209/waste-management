@@ -30,9 +30,12 @@ export default function Header() {
 
                         <div className="menu-desktop">
                             <ul className="main-menu">
-                                <li className="active-menu"><a href="/">Home</a></li>
+                                <li className="active-menu"><a href="/home">Home</a></li>
                                 <li><a href="/buy">Buy</a></li>
                                 <li><a href="/addWaste">Sell</a></li>
+                                <li><a href="/orders">Orders</a></li>
+                                <li><a href="/pickupForm">Schedule Pickup</a></li>
+                                <li><a href="/viewPickup">View Pickups</a></li>
                                 <li className="label1">
                                     <a href="product.html">Categories</a>
                                     <ul className="sub-menu">
@@ -67,7 +70,7 @@ export default function Header() {
                                 <i className="zmdi zmdi-search"></i>
                             </div>
                             <div className="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="2">
-                                <i className="zmdi zmdi-shopping-cart"></i>
+                                <a href="/shoppingCart" style={{color:"white"}}><i className="zmdi zmdi-shopping-cart"></i></a>
                             </div>
 
                             <div className="dropdown">
@@ -84,7 +87,7 @@ export default function Header() {
                                 <div className="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                                     <li>
                                         <a className="dropdown-item">
-                                            <h4>{user.firstName} {user.lastName}</h4>
+                                            <h6>{user.firstName} {user.lastName}</h6>
                                         </a>
                                     </li>
                                     <div className="dropdown-2">

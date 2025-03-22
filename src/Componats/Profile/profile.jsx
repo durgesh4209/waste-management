@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './profile.css';
+import HeaderProvider from '../../context/HeaderProver';
 
 const Profile = () => {
   const [profileImage, setProfileImage] = useState('https://cdn-icons-png.flaticon.com/512/747/747376.png');
@@ -17,13 +18,14 @@ const Profile = () => {
 
   return (
       <>
+      <HeaderProvider/>
          <div style={{ paddingTop: "20px" }}>
       <div class="container mt-4">
         <div class="main-card">
           <div class="d-flex justify-content-between align-items-center">
             <h4>Client Data</h4>
-            <a href="profile-edit.html" class="btn btn-danger">Edit</a>
-          </div>
+            <a href="/profileForm" class="btn btn-danger">Edit</a>
+          </div>  
 
           <div class="d-flex m-t-28">
             <div class="card profile-card">

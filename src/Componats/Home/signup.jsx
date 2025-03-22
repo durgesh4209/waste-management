@@ -129,7 +129,7 @@ const SignUpForm = () => {
                     </button>
                 </form>
                 <div className="text-center fs-6 m-t-20">
-                    <a href="/login">Already have an account? Login</a>
+                    <a href="/">Already have an account? Login</a>
                 </div>
             </div>
             {showAlert && (

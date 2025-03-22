@@ -1,155 +1,121 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AlertBox from "../../alert";
 import Header from "../Commons/header";
+import api from "../../utils/api";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function QuickView() {
     const [showAlert, setShowAlert] = useState(false);
-
     const [quantity, setQuantity] = useState(1);
+    const [waste, setWaste] = useState({});
+    const { id } = useParams();
+    const navigate = useNavigate();
 
-    const increaseQuantity = () => {
-        setQuantity(prev => prev + 1);
-    };
+    useEffect(() => {
+        
+        api.get(`/ecobin/waste/id/${id}`)
+            .then(response => {
+                setWaste(response.data);
+            })
+            .catch(error => {
+                console.error("Error fetching waste details:", error);
+            });
+    }, [id]);
 
-    const decreaseQuantity = () => {
-        setQuantity(prev => (prev > 1 ? prev - 1 : 1));
-    };
+    const increaseQuantity = () => setQuantity(prev => prev + 1);
+    const decreaseQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
 
+    const addToCart = () => {
+        const cartData = {
+            wasteId: waste._id, 
+            quantity: quantity,
+        };
+        
+            api.get("/ecobin/waste/addToCart/"+id)
+                .then(response => {
+                    setShowAlert(true);
+                    setTimeout(() => {
+                        setShowAlert(false);
+                        navigate("/shoppingCart");
+                    }, 2000);
+                })
+                .catch(error => {
+                    console.error("Error adding to cart:", error);
+                });
+        };
 
     return (
         <>
             <Header />
             <div style={{ paddingTop: "80px" }}>
-                {/* <!-- Modal1 --> */}
-                <div class="wrap-modal1 js-modal1 p-t-60 p-b-20 show-modal1" >
-                    <div class="overlay-modal1 js-hide-modal1"></div>
-
-                    <div class="container">
-                        <div class="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
+                <div className="wrap-modal1 js-modal1 p-t-60 p-b-20 show-modal1">
+                    <div className="overlay-modal1 js-hide-modal1"></div>
+                    <div className="container">
+                        <div className="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
                             <a href="/buy">
-                                <button class="how-pos3 hov3 trans-04 js-hide-modal1">
+                                <button className="how-pos3 hov3 trans-04 js-hide-modal1">
                                     <img src="images/icons/icon-close.png" alt="CLOSE" />
                                 </button>
                             </a>
-
-
-                            <div class="row">
-                                <div class="col-md-6 col-lg-7 p-b-30">
-                                    <div class="p-l-25 p-r-30 p-lr-0-lg">
-                                        <div class="wrap-slick3 flex-sb flex-w">
-                                            <div class="wrap-slick3-dots"></div>
-                                            <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
-
-                                            <div class="slick3 gallery-lb">
-                                                <div class="item-slick3" data-thumb="images/product-detail-01.jpg">
-                                                    <div class="wrap-pic-w pos-relative">
-                                                        <img src="images/product-detail-01.jpg" alt="IMG-PRODUCT" />
-
-                                                        <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-01.jpg">
-                                                            <i class="fa fa-expand"></i>
-                                                        </a>
-                                                    </div>
-                                                </div>
-
-                                                {/* <div class="item-slick3" data-thumb="images/product-detail-02.jpg">
-                                                <div class="wrap-pic-w pos-relative">
-                                                    <img src="images/product-detail-02.jpg" alt="IMG-PRODUCT"/>
-
-                                                        <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-02.jpg">
-                                                            <i class="fa fa-expand"></i>
-                                                        </a>
-                                                </div>
-                                            </div> */}
-
-                                                {/* <div class="item-slick3" data-thumb="images/product-detail-03.jpg">
-                                                <div class="wrap-pic-w pos-relative">
-                                                    <img src="images/product-detail-03.jpg" alt="IMG-PRODUCT"/>
-
-                                                        <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-03.jpg">
-                                                            <i class="fa fa-expand"></i>
-                                                        </a>
-                                                </div>
-                                            </div> */}
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div className="row">
+                                <div className="col-md-6 col-lg-7 p-b-30">
+                                    {waste?.images?.data ? (
+                                        <img
+                                            src={`data:image/png;base64,${waste.images.data}`}
+                                            alt={waste.name || "Waste"}
+                                            className="img-fluid m-l-90"
+                                            style={{ height: 500, width: 400 }}
+                                        />
+                                    ) : (
+                                        <img
+                                            src="images/product-detail-01.jpg"
+                                            alt="Default Waste"
+                                            className="img-fluid m-l-90"
+                                            style={{ height: 500, width: 400 }}
+                                        />
+                                    )}
                                 </div>
-
-                                <div class="col-md-6 col-lg-5 p-b-30">
-                                    <div class="p-r-50 p-t-5 p-lr-0-lg">
-                                        <h4 class="mtext-105 cl2 js-name-detail p-b-14">
-                                            Lightweight Jacket
-                                        </h4>
-
-                                        <span class="mtext-106 cl2">
-                                            $58.79
-                                        </span>
-
-                                        <p class="stext-102 cl3 p-t-23">
-                                            Nulla eget sem vitae eros pharetra viverra. Nam vitae luctus ligula. Mauris consequat ornare feugiat.
-                                        </p>
-
-
-                                        <div class="flex-w flex-r-m p-b-10 m-t-23 ">
-                                            <div class="size-203 flex-c-m respon6">
-                                                Waste Type
-                                            </div>
-
-                                            <div class="size-204 respon6-next  border-0">
-                                                <div class="rs1-select2 bor8 bg0 border-0">
-                                                    <input value={'Electronic Waste'} class="js-select2 border-0 " style={{ padding: 7 }} name="time" disabled />
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="flex-w flex-m">
-                                            <div class="size-203 flex-c-m m-t-23"  >
-                                                Waste in kg
-                                            </div>
-                                            <div class="wrap-num-product flex-w flex-m m-r-20 m-tb-10 m-t-23" style={{ marginleft: 20 }}>
-                                                <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m" onClick={decreaseQuantity}>
-                                                    <i class="fs-16 zmdi zmdi-minus" ></i>
-                                                </div>
-
-                                                <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product" value={quantity} />
-
-                                                <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" onClick={increaseQuantity}>
-                                                    <i class="fs-16 zmdi zmdi-plus"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-w flex-r-m p-b-10">
-
-                                            <div class="size-204 flex-w flex-m respon6-next">
-
-                                                <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail mt-3" onClick={() => setShowAlert(true)}>
-                                                    Add to cart
-                                                </button>
-                                                {showAlert && <AlertBox title="Eletrical Waste" message="Added To Cart" onClose={() => setShowAlert(false)} />}
-                                            </div>
+                                <div className="col-md-6 col-lg-5 p-b-30">
+                                    <h4 className="mtext-105 cl2 js-name-detail p-b-14">
+                                        {waste.name || "Loading..."}
+                                    </h4>
+                                    <span className="mtext-106 cl2">
+                                        ${waste.price || "--"}
+                                    </span>
+                                    <p className="stext-102 cl3 p-t-23">
+                                        {waste.description || "No description available."}
+                                    </p>
+                                    <div className="flex-w flex-r-m p-b-10 m-t-23">
+                                        <div className="size-203 flex-c-m respon6">Waste Type</div>
+                                        <div className="size-204 respon6-next">
+                                            <input
+                                                value={waste.type || "--"}
+                                                className="border-0 p-2"
+                                                disabled
+                                            />
                                         </div>
                                     </div>
-
-
-                                    <div class="flex-w flex-m p-l-100 p-t-23 respon7">
-                                        <div class="flex-m bor9 p-r-10 m-r-11">
-                                            <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 js-addwish-detail tooltip100" data-tooltip="Add to Wishlist">
-                                                <i class="zmdi zmdi-favorite"></i>
-                                            </a>
+                                    <div className="flex-w flex-m">
+                                        <div className="size-203 flex-c-m m-t-23">Waste in kg</div>
+                                        <div className="wrap-num-product flex-w flex-m m-r-20 m-tb-10 m-t-23">
+                                            <button className="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m" onClick={decreaseQuantity}>-</button>
+                                            <input type="number" className="mtext-104 cl3 txt-center num-product" value={quantity} readOnly />
+                                            <button className="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" onClick={increaseQuantity}>+</button>
                                         </div>
-
-                                        <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Facebook">
-                                            <i class="fa fa-facebook"></i>
-                                        </a>
-
-                                        <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Twitter">
-                                            <i class="fa fa-twitter"></i>
-                                        </a>
-
-                                        <a href="#" class="fs-14 cl3 hov-cl1 trans-04 lh-10 p-lr-5 p-tb-2 m-r-8 tooltip100" data-tooltip="Google Plus">
-                                            <i class="fa fa-google-plus"></i>
-                                        </a>
                                     </div>
+                                    <button
+                                        className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail mt-3"
+                                        onClick={addToCart}
+                                    >
+                                        Add to Cart
+                                    </button>
+                                    {showAlert && (
+                                        <AlertBox
+                                            title="Success"
+                                            message="Successfully Waste added  to cart."
+                                            onClose={() => setShowAlert(false)}
+                                        />
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -157,6 +123,5 @@ export default function QuickView() {
                 </div>
             </div>
         </>
-
-    )
+    );
 }

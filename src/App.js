@@ -12,7 +12,10 @@ import Profile from './Componats/Profile/profile';
 import ProfileForm from './Componats/Profile/editProfile';
 import ShoppingCart from './Componats/Commons/shopingCart'; 
 import Login from './Componats/Home/loginFom';
-import SignUpForm from './Componats/Home/signup';
+import SignUpForm from './Componats/Home/signup'; 
+import OrdersPage from './Componats/Orders/order'; 
+import EcoCartPickupForm from './Componats/Pickup/pickupForm';
+import ViewPickup from './Componats/Pickup/viewPickup';
 
 
 function App() {
@@ -24,7 +27,7 @@ function App() {
           <Route path='/home' element={<Home />} />
           <Route path='/buy' element={<BuyWast />} />
           <Route path='/buyw' element={<BootstrapCards />} />
-          <Route path='/Quickview' element={<QuickView />} />
+          <Route path='/Quickview/:id' element={<QuickView />} />
           <Route path='/addWaste' element={<EcoCartForm />} />
           <Route path='/blog' element={<Blog />} />
           <Route path='/contact' element={<Contact />} />
@@ -33,6 +36,9 @@ function App() {
           <Route path='/shoppingCart' element={<ShoppingCart />} />
           <Route path='/' element ={<Login/>}/>
           <Route path ='/signup' element={<SignUpForm/>}/>
+          <Route path='/orders' element={<OrdersPage/>}/>
+          <Route path='/pickupForm' element={<EcoCartPickupForm/>}/>
+          <Route path='/viewPickup' element = {<ViewPickup/>}/>
         </Routes>
       </BrowserRouter>
 

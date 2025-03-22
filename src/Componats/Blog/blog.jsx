@@ -1,11 +1,12 @@
 import React from "react";
 import Footer from "../Commons/footer";
 import Header from "../Commons/header";
+import HeaderProvider from "../../context/HeaderProver";
 
 export default function Blog() {
     return (
         <>
-            <Header />
+            <HeaderProvider />
             <div style={{ paddingTop: "60px" }}>
                 <section
                     className="bg-img1 txt-center p-lr-1 p-tb-92"

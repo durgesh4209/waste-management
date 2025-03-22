@@ -1,10 +1,11 @@
 import React from "react";
 import Header from "../Commons/header";
+import HeaderProvider from "../../context/HeaderProver";
 
 export default function Contact() {
     return (
             <>
-                <Header/>
+                <HeaderProvider/>
                 <div>
             {/* Banner Section */}
             <section className="bg-img1 txt-center p-lr-15 p-tb-92" style={{ backgroundImage: "url('images/bg-01.jpg')" }}>

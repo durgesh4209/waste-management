@@ -4,7 +4,7 @@ import Header from "../Commons/header";
 import api from "../../utils/api";
 import { useNavigate, useParams } from "react-router-dom";
 
-export default function QuickView() {
+export default function AdminQuickView() {
     const [showAlert, setShowAlert] = useState(false);
     const [quantity, setQuantity] = useState(1);
     const [waste, setWaste] = useState({});
@@ -52,7 +52,7 @@ export default function QuickView() {
                     <div className="overlay-modal1 js-hide-modal1"></div>
                     <div className="container">
                         <div className="bg0 p-t-60 p-b-30 p-lr-15-lg how-pos3-parent">
-                            <a href="/buy">
+                            <a href="/recycledWaste">
                                 <button className="how-pos3 hov3 trans-04 js-hide-modal1">
                                     <img src="images/icons/icon-close.png" alt="CLOSE" />
                                 </button>
@@ -103,12 +103,12 @@ export default function QuickView() {
                                             <button className="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" style={{widows:40,marginRight:-10}} onClick={increaseQuantity}>+</button>
                                         </div>
                                     </div>
-                                    <button
+                                    {/* <button
                                         className="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail mt-3"
                                         onClick={addToCart}
                                     >
                                         Add to Cart
-                                    </button>
+                                    </button> */}
                                     {showAlert && (
                                         <AlertBox
                                             title="Success"

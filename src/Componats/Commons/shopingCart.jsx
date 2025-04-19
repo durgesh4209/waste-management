@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import './shopingCart.css'
 import { faImage, faTags, faBox, faFileAlt, faInr, faTrash } from "@fortawesome/free-solid-svg-icons";
 import api from '../../utils/api';
-import AlertBox from '../../alert';  
+import AlertBox from '../../alert';
 import { useNavigate } from 'react-router-dom';
 
 const ShoppingCart = () => {
@@ -14,6 +14,8 @@ const ShoppingCart = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [items, setItems] = useState([]);
     const navigate = useNavigate();
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
+    const [discountAmount, setDiscountAmount] = useState(0);
 
     const [shippingAddress, setShippingInfo] = useState({
         country: '',
@@ -30,8 +32,17 @@ const ShoppingCart = () => {
     const [alertType, setAlertType] = useState('');
 
     const calculateTotal = () => {
-        return items.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
+        return items.reduce((total, item) => total + item.price * item.quantity, 0);
     };
+
+    const finalAmount = (calculateTotal() - discountAmount).toFixed(2);
+    const orderData = {
+        wastes: items,
+        shippingAddress,
+        totalAmount: finalAmount,
+        couponCode: appliedCoupon?.code || null
+    };
+
 
     const handleQuantityChange = (id, newValue) => {
         const updatedItems = items.map(item =>
@@ -64,13 +75,13 @@ const ShoppingCart = () => {
     }, []);
 
     function removeCart(id) {
-        
+
         api.get("/ecobin/waste/removeCart/" + id)
             .then(response => {
                 setAlertType('success');
                 setShowAlert(true);
                 setmsg("waste Removed from cart")
-                setTimeout(() => navigate('/shoppingCart'), 2500);
+                setTimeout(() => navigate(0), 2500);
 
             })
             .catch(error => {
@@ -94,28 +105,74 @@ const ShoppingCart = () => {
             totalAmount: calculateTotal()
         };
 
-        debugger
         api.post('/ecobin/waste/order', orderData)
-    .then(response => {
-        if (response.status >= 200 && response.status < 300) {
-            setAlertType('success');
-            setShowAlert(true);
-            setmsg('Order confirmed!');
-            setIsSubmitting(false);
-            setTimeout(() => navigate(0), 2500);
-        } else {
-            throw new Error('Failed to confirm the order.');
-        }
-    })
-    .catch(error => {
-        setAlertType('error');
-        setShowAlert(true);
-        setmsg('Error confirming the order. Please try again.');
-        console.error("Error confirming order:", error);
-        setIsSubmitting(false);
-    });
+            .then(response => {
+                if (response.status >= 200 && response.status < 300) {
+                    setAlertType('success');
+                    setShowAlert(true);
+                    setmsg('Order confirmed!');
+                    setIsSubmitting(false);
+                    setTimeout(() => navigate(0), 2500);
+                } else {
+                    throw new Error('Failed to confirm the order.');
+                }
+            })
+            .catch(error => {
+                setAlertType('error');
+                setShowAlert(true);
+                setmsg('Error confirming the order. Please try again.');
+                console.error("Error confirming order:", error);
+                setIsSubmitting(false);
+            });
 
     };
+
+    const applyCoupon = () => {
+        if (!couponCode) return;
+
+        api.get(`/ecobin/waste/coupons/code/${couponCode}`)
+            .then(response => {
+                const coupon = response.data;
+
+                const now = new Date();
+                const start = new Date(coupon.startDate);
+                const end = new Date(coupon.endDate);
+                const orderTotal = parseFloat(calculateTotal());
+
+                if (!coupon.isActive || now < start || now > end) {
+                    throw new Error("Coupon is not valid at this time.");
+                }
+
+                if (orderTotal < coupon.minOrderAmount) {
+                    throw new Error(`Order must be at least ₹${coupon.minOrderAmount} to use this coupon.`);
+                }
+
+                let discount = 0;
+
+                if (coupon.discountType === 'FLAT') {
+                    discount = coupon.discountValue;
+                } else if (coupon.discountType === 'PERCENTAGE') {
+                    discount = (orderTotal * coupon.discountValue) / 100;
+                    if (discount > coupon.maxDiscountAmount) {
+                        discount = coupon.maxDiscountAmount;
+                    }
+                }
+
+                setAppliedCoupon(coupon);
+                setDiscountAmount(discount);
+                setAlertType("success");
+                setShowAlert(true);
+                setmsg(`Coupon applied! You saved ₹${discount.toFixed(2)}.`);
+
+            })
+            .catch(error => {
+                console.error("Error applying coupon:", error);
+                setAlertType("error");
+                setShowAlert(true);
+                setmsg(error.response?.data?.message || "Invalid coupon.");
+            });
+    };
+
     return (
         <>
             <HeaderProvider />
@@ -147,12 +204,12 @@ const ShoppingCart = () => {
                                                     <td className="column-3">₹ {item.price}</td>
                                                     <td className="column-4">
                                                         <div className="wrap-num-product flex-w m-l-auto m-r-0">
-                                                            <div className="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m" onClick={() => handleQuantityChange(item.id, item.quantity - 1)}>
+                                                            <div className="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m p-r-10 " style={{ width: 55 }} onClick={() => handleQuantityChange(item.id, item.quantity - 1)}>
                                                                 <i className="fs-16 zmdi zmdi-minus"></i>
                                                             </div>
-                                                            <input className="mtext-104 cl3 txt-center num-product" type="number" name={`num-product${item.id}`} value={item.quantity} onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value))} />
+                                                            <input className="mtext-104 cl3 txt-center num-product m-l--10" type="number" name={`num-product${item.id}`} value={item.quantity} onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value))} />
                                                             <div className="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" onClick={() => handleQuantityChange(item.id, item.quantity + 1)}>
-                                                                <i className="fs-16 zmdi zmdi-plus"></i> +
+                                                                <i className="fs-16 zmdi zmdi-plus"></i>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -168,7 +225,10 @@ const ShoppingCart = () => {
                                 <div className="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
                                     <div className="flex-w flex-m m-r-20 m-tb-5">
                                         <input className="stext-104  plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text" name="coupon" value={couponCode} onChange={handleCouponChange} placeholder="Coupon Code" />
-                                        <div className="flex-c-m stext-999 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
+                                        <div
+                                            className="flex-c-m stext-999 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5"
+                                            onClick={applyCoupon}  // Add this
+                                        >
                                             Apply coupon
                                         </div>
                                     </div>
@@ -195,7 +255,7 @@ const ShoppingCart = () => {
 
                                     <div className="size-209">
                                         <span className="mtext-110">
-                                            ₹ {calculateTotal()}
+                                            ₹  {finalAmount}
                                         </span>
                                     </div>
                                 </div>
@@ -218,29 +278,29 @@ const ShoppingCart = () => {
                                             </span>
 
                                             <div className="bor8 bg0 m-b-22">
-                                                <input className="stext-111 cl8 plh3 size-111 p-lr-15" value={'India'} disabled type="text" name="country" onChange={handleShippingChange} />
+                                                <input className="stext-111 cl8 plh3 size-111 p-lr-15" value={'India'} disabled type="text" name="country" onChange={handleShippingChange} required />
                                             </div>
 
                                             <div className="bor8 bg0 m-b-12">
-                                                <input className="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="state" placeholder="State" onChange={handleShippingChange} />
+                                                <input className="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="state" placeholder="State" onChange={handleShippingChange} required />
                                             </div>
                                             <div className="bor8 bg0 m-b-12">
-                                                <input className="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="city" placeholder="City" onChange={handleShippingChange} />
+                                                <input className="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="city" placeholder="City" onChange={handleShippingChange} required />
                                             </div>
                                             <div className="bor8 bg0 m-b-22">
-                                                <input className="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="zipCode" placeholder="Postcode / Zip" onChange={handleShippingChange} />
+                                                <input className="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="zipCode" placeholder="Postcode / Zip" onChange={handleShippingChange} required />
                                             </div>
                                             <div className="bor8 bg0 m-b-22">
-                                                <input className="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="address" placeholder="Area/Building Name" onChange={handleShippingChange} />
+                                                <input className="stext-111 cl8 plh3 size-111 p-lr-15" type="text" name="address" placeholder="Area/Building Name" onChange={handleShippingChange} required />
                                             </div>
 
                                             <div className="bor8 bg0 m-b-22">
-                                                <input className="stext-111 cl8 plh3 size-111 p-lr-15" type="number" name="phone" placeholder="Phone Number" onChange={handleShippingChange} />
+                                                <input className="stext-111 cl8 plh3 size-111 p-lr-15" type="number" name="phone" placeholder="Phone Number" onChange={handleShippingChange} required />
                                             </div>
                                             <div className="flex-w">
-                                                <div className="flex-c-m stext-999 cl2 size-115 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer">
+                                                {/* <div className="flex-c-m stext-999 cl2 size-115 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer">
                                                     Update Totals
-                                                </div>
+                                                </div> */}
                                             </div>
                                         </div>
                                     </div>

@@ -9,7 +9,7 @@ export default function Header() {
 
     if (!auth || !auth.user) {
         console.warn("AuthContext is not available. Make sure AuthProvider wraps your component tree.");
-        return null; // Prevent rendering if context is missing
+        return null; 
     }
 
     const { user, logout } = auth;
@@ -36,30 +36,7 @@ export default function Header() {
                                 <li><a href="/orders">Orders</a></li>
                                 <li><a href="/pickupForm">Schedule Pickup</a></li>
                                 <li><a href="/viewPickup">View Pickups</a></li>
-                                <li className="label1">
-                                    <a href="product.html">Categories</a>
-                                    <ul className="sub-menu">
-                                        <div className="flex-w flex-l-m filter-tope-group m-tb-19">
-                                            {[
-                                                "Organic Waste",
-                                                "Electronic Waste",
-                                                "BioMedical Waste",
-                                                "Plastic Waste",
-                                                "Construction Waste",
-                                                "Industrial Waste",
-                                                "Agricultural Waste",
-                                            ].map((category, index) => (
-                                                <button
-                                                    key={index}
-                                                    className="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5"
-                                                    data-filter={`.${category.toLowerCase().replace(/\s+/g, "_")}`}
-                                                >
-                                                    {category}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </ul>
-                                </li>
+                                <li><a href="/userRecycledWaste">Recycled Wastes</a></li>
                                 <li><a href="/blog">Blog</a></li>
                                 <li><a href="/contact">Contact</a></li>
                             </ul>

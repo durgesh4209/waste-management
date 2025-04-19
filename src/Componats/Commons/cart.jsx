@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 export default function Cart() {
   
-  const [isCartVisible, setIsCartVisible] = useState(true);
+  const [isCartVisible, setIsCartVisible] = useState(false);
 
   const showCart = () => {
     setIsCartVisible(true);

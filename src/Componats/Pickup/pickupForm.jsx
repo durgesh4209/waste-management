@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import '../Sell/css/EcoCartForm.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImage, faTags, faBox, faFileAlt, faInr, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faImage, faTags, faBox, faFileAlt, faInr, faTrash,faPhone } from "@fortawesome/free-solid-svg-icons";
 import Footer from "../Commons/footer";
 import HeaderProvider from "../../context/HeaderProver";
 import api from "../../utils/api";
@@ -28,12 +28,13 @@ export default function EcoCartPickupForm() {
         state: "",
         postalCode: "",
         country: "",
+        phone : "",
     };
 
     const validationSchema = Yup.object().shape({
         name: Yup.string().required("Waste Name is required"),
         type: Yup.string().required("Waste Type is required"),
-        price: Yup.number().positive().required("Price is required"),
+        // price: Yup.number().positive().required("Price is required"),
         quantity: Yup.number().positive().required("Quantity is required"),
         description: Yup.string().required("Description is required"),
         image: Yup.mixed().required("Image is required"),
@@ -42,6 +43,7 @@ export default function EcoCartPickupForm() {
         state: Yup.string().required("State is required"),
         postalCode: Yup.string().required("Postal Code is required"),
         country: Yup.string().required("Country is required"), 
+        phone: Yup.string().matches(/^\d{10}$/, "Phone number must be 10 digits").required("Phone number is required"),
     });
 
     const handleSubmit = async(values, { setSubmitting }) => {
@@ -51,9 +53,10 @@ export default function EcoCartPickupForm() {
         formData.append("data", JSON.stringify({
             name: values.name,
             type: values.type,
-            price: values.price,
+            price: "",
             quantity: values.quantity,
             description: values.description,
+            phone: values.phone,
             street: values.street,
             city: values.city,
             state: values.state,
@@ -70,7 +73,7 @@ export default function EcoCartPickupForm() {
                    setAlertType('success');
                    setShowAlert(true);
                    setMsg('Pickup Schedule successfully! ')
-                   setTimeout(() => { navigate('0') }, 2500)
+                   setTimeout(() => { navigate('/viewPickup') }, 2500)
                } catch (error) {
                    setAlertType('error');
                    setShowAlert(true);
@@ -127,10 +130,15 @@ export default function EcoCartPickupForm() {
                                         <ErrorMessage name="quantity" component="div" className="error-message" />
                                     </div>
 
-                                    <div className="form-field">
+                                    {/* <div className="form-field">
                                         <FontAwesomeIcon icon={faInr} />
                                         <Field type="number" name="price" placeholder="Price" />
                                         <ErrorMessage name="price" component="div" className="error-message" />
+                                    </div> */}
+                                    <div className="form-field">
+                                        <FontAwesomeIcon icon={faPhone} />
+                                        <Field type="number" name="phone" placeholder="phone" />
+                                        <ErrorMessage name="phone" component="div" className="error-message" />
                                     </div>
                                 </div>
 

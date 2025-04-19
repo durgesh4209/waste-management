@@ -23,16 +23,27 @@ const LoginForm = () => {
                     'Content-Type': 'application/json',
                 }
             });
-
+            debugger
             if (response.data.jwtToken) {
                 login(response.data.jwtToken);
-                localStorage.setItem('userFullName',response.data.firstname+' '+response.data.lastname)
-                console.log(response.data
-                )
+                localStorage.setItem('userFullName', response.data.firstname + ' ' + response.data.lastname);
+                localStorage.setItem('role', response.data.role);
                 localStorage.setItem('token', response.data.jwtToken);
                 setAlertType('success');
-                setShowAlert(true);
-                setTimeout(() => { navigate('/home') }, 2500)
+                debugger
+                console.log(response.data
+                )
+                setTimeout(() => {
+                    const role = response.data.role.trim().toLowerCase();
+                
+                    if (role === "dispatcher") {
+                        navigate("/dispatcherDashboard");
+                    } else if (role === "admin") {
+                        navigate("/adminDashboard");
+                    } else {
+                        navigate("/home");
+                    }
+                }, 2500);
             } else {
 
                 setAlertType('error');
@@ -41,13 +52,13 @@ const LoginForm = () => {
             }
         } catch (error) {
             console.error('There was a problem with the login:', error);
-            setAlertType('error'); 
-            setShowAlert(true); 
+            setAlertType('error');
+            setShowAlert(true);
         }
     };
 
     const handleCloseAlert = () => {
-        setShowAlert(false); 
+        setShowAlert(false);
     };
 
     return (
@@ -87,7 +98,7 @@ const LoginForm = () => {
                     </button>
                 </form>
                 <div className="text-center fs-6 m-t-20">
-                 <a href="/signup">Sign up</a>
+                    <a href="/signup">Sign up</a>
                 </div>
             </div>
             {showAlert && (
